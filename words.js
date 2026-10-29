@@ -1,0 +1,88 @@
+// ============================================================
+// 词书：新时代大学学术英语词汇
+// 结构：wordBank[书名][Unit][英文] = 中文
+// 新增 Unit 直接加在同层即可，UI 会自动出现
+// ============================================================
+const wordBank = {
+    "新时代大学学术英语词汇": {
+        "Unit 1 · Food Science": {
+            "genetic": "遗传学的",
+            "modification": "改变；修改",
+            "genetically modified (GM)": "转基因的",
+            "genetic modification": "遗传（基因）工程（学）",
+            "natural selection": "自然选择；物竞天择",
+            "disperse": "（使）扩散；（使）散开",
+            "pillar": "支柱；核心",
+            "high-yielding": "高产量的",
+            "compete": "竞争",
+            "defend": "防御；保卫",
+            "conflict": "冲突",
+            "invest": "投资",
+            "nutritious": "有营养的",
+            "conventional": "传统的",
+            "for short": "简称",
+            "determined": "坚定的",
+            "interaction": "相互作用；互动",
+            "sustainable": "可持续的",
+            "organic farming": "有机农业",
+            "biased": "有偏见的",
+            "yield": "产量",
+            "organic label": "有机标签",
+            "alternative": "替代品",
+            "fertilizer": "肥料",
+            "herbicide": "除草剂",
+            "pesticide": "杀虫剂",
+            "feed additive": "饲料添加剂",
+            "livestock": "家畜；牲畜",
+            "salt": "盐",
+            "sugar": "糖",
+            "fat": "脂肪",
+            "addictive": "使人上瘾的"
+        },
+        "Unit 2 · Technology": {
+            "reliable": "可靠的",
+            "decision": "决定；决策",
+            "go wrong": "出错；发生故障",
+            "practical": "实际的；实用的",
+            "helpless": "无助的",
+            "grasp": "理解；掌握",
+            "ethical": "伦理的；道德的",
+            "ease the pressure": "减轻压力",
+            "shrinking": "萎缩的；缩小的",
+            "aging workforce": "老龄化劳动力",
+            "humanlike": "类人的",
+            "intuitive": "直觉的",
+            "heartbeat": "心跳",
+            "organic": "有机的",
+            "give it a pat": "轻拍一下",
+            "mass": "大量的；大规模的",
+            "shape": "塑造",
+            "technical": "技术的",
+            "creative": "创造性的"
+        },
+        "Unit 3 · Identity": {
+            "trait psychology": "特质心理学",
+            "personality": "人格；个性",
+            "OCEAN": "海洋（此处指人格五因素模型：开放性、尽责性、外向性、宜人性、神经质）",
+            "open to": "对……开放",
+            "closed": "封闭的",
+            "introverted": "内向的",
+            "extrovert": "外向的人",
+            "introvert": "内向的人",
+            "agreeable": "宜人的；随和的",
+            "stable": "稳定的",
+            "exhausting": "令人疲惫的",
+            "embrace": "拥抱；欣然接受",
+            "balance": "平衡",
+            "script": "剧本；脚本",
+            "role": "角色",
+            "reach out to": "联系；接触",
+            "paralyzed": "瘫痪的；不知所措的",
+            "personal identity": "个人身份",
+            "qualitatively identical": "性质上相同的",
+            "sufficient": "充足的；足够的",
+            "in favor of": "支持；赞成",
+            "physical continuity": "身体的连续性"
+        }
+    }
+};

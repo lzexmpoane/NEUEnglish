@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEUEnglish</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>NEUEnglish</h1>
+        <h2>不要把时间花在洋人身上</h2>
+    </header>
+
+    <main>
+        <div class="scope-bar">
+            <select id="bookSelect" aria-label="选择词书"></select>
+            <select id="unitSelect" aria-label="选择单元"></select>
+        </div>
+
+        <div class="mode-bar" role="group" aria-label="题型">
+            <button type="button" class="chip active" data-mode="en2zh">英 → 中</button>
+            <button type="button" class="chip" data-mode="zh2en">中 → 英</button>
+            <button type="button" class="chip" data-mode="mixed">混合</button>
+        </div>
+
+        <div class="card" id="card">
+            <span class="mode-tag" id="modeTag">英 → 中 · 选择题</span>
+            <p id="Meaning">加载中…</p>
+        </div>
+
+        <div id="options" class="options-grid" hidden></div>
+
+        <div id="answerArea" class="answer-area" hidden>
+            <input type="text" id="wordInput" placeholder="请输入英文单词"
+                   autocomplete="off" autocapitalize="off" spellcheck="false">
+            <button class="btn-primary" id="submitBtn" onclick="checkWord()">确定</button>
+        </div>
+
+        <p class="retry-hint" id="retryHint" hidden>✗ 拼写有误，再试一次</p>
+
+        <!-- 新增：答案提示（查看答案后显示，继续输入时自动隐藏） -->
+        <p class="answer-hint" id="answerHint" hidden></p>
+
+        <button class="btn-ghost" id="showAnswerBtn" hidden onclick="showAnswer()">查看答案</button>
+
+        <button class="btn-secondary next-btn" onclick="nextQuestion()">下一题</button>
+
+        <div class="stats" id="stats"></div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026</p>
+    </footer>
+
+    <!-- 顺序很重要：先 words.js，后 app.js -->
+    <script src="words.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
