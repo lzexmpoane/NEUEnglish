@@ -1,14 +1,10 @@
-// ============================================================
-// 新时代大学学术英语 · 综合教程词库
-// 结构：wordBank[书名][Unit][英文] = { pos: 词性, zh: 中文 }
-// ============================================================
 const wordBank = {
-    "综合教程": {
-        "Unit 1": {
-            "genetic": { pos: "a.", zh: "基因的；遗传学的" },
-            "modification": { pos: "n.", zh: "改变；修改" },
+    "新时代大学学术英语·综合教程（上册）": {
+        "Unit 1 · Food Science": {
             "genetically modified (GM)": { pos: "a.", zh: "转基因的" },
             "genetic modification": { pos: "n.", zh: "遗传（基因）工程（学）" },
+            "genetic": { pos: "a.", zh: "基因的；遗传学的" },
+            "modification": { pos: "n.", zh: "改变；修改" },
             "natural selection": { pos: "n.", zh: "自然选择；物竞天择" },
             "rot": { pos: "v./n.", zh: "腐败；腐烂" },
             "decomposition": { pos: "n.", zh: "腐烂；分解" },
@@ -159,7 +155,7 @@ const wordBank = {
             "wicked": { pos: "a.", zh: "极坏的；邪恶的" },
             "wither": { pos: "v.", zh: "枯萎；凋谢" }
         },
-        "Unit 2": {
+        "Unit 2 · Technology": {
             "pervasive": { pos: "a.", zh: "普遍的；弥漫的" },
             "wireless network": { pos: "n.", zh: "无线网络" },
             "digital world": { pos: "n.", zh: "数字世界" },
@@ -275,7 +271,7 @@ const wordBank = {
             "volume": { pos: "n.", zh: "大量；许多" },
             "what if": { pos: "phr.", zh: "如果……怎么样" }
         },
-        "Unit 3": {
+        "Unit 3 · Identity": {
             "trait psychology": { pos: "n.", zh: "特质心理学" },
             "personality": { pos: "n.", zh: "人格；个性" },
             "OCEAN": { pos: "n.", zh: "海洋（此处指人格五因素模型）" },
@@ -425,7 +421,7 @@ const wordBank = {
             "watershed": { pos: "n.", zh: "转折点；分水岭" },
             "when it comes to": { pos: "phr.", zh: "当涉及……" }
         },
-        "Unit 4": {
+        "Unit 4 · Health": {
             "a host of": { pos: "phr.", zh: "大量；许多" },
             "accordingly": { pos: "ad.", zh: "相应地" },
             "activation": { pos: "n.", zh: "激活" },
@@ -536,7 +532,7 @@ const wordBank = {
             "well-being": { pos: "n.", zh: "健康；幸福" },
             "well-oiled": { pos: "a.", zh: "运转顺利的" }
         },
-        "Unit 5": {
+        "Unit 5 · Psychology": {
             "act up": { pos: "phr.", zh: "出毛病" },
             "addiction": { pos: "n.", zh: "瘾；入迷" },
             "alert": { pos: "n.", zh: "警报" },
@@ -650,7 +646,7 @@ const wordBank = {
             "West Coast": { pos: "n.", zh: "美国西海岸" },
             "X Games": { pos: "n.", zh: "世界极限运动会" }
         },
-        "Unit 6": {
+        "Unit 6 · Zoology": {
             "a good": { pos: "phr.", zh: "至少" },
             "accommodating": { pos: "a.", zh: "帮助的；与人方便的" },
             "AIDS": { pos: "n.", zh: "艾滋病" },
@@ -807,12 +803,11 @@ const wordBank = {
             "ultimate": { pos: "a.", zh: "最后的；最终的" },
             "unpredictable": { pos: "a.", zh: "不可预测的" },
             "upward of": { pos: "phr.", zh: "多于……以上" },
-            "Utrecht University": { pos: "n.", zh: "乌得勒支大学" },
             "veterinary": { pos: "a.", zh: "兽医的" },
             "wheelchair": { pos: "n.", zh: "轮椅" },
             "work out to": { pos: "phr.", zh: "总共达……" }
         },
-        "Unit 7": {
+        "Unit 7 · Sports": {
             "achiever": { pos: "n.", zh: "取得成绩的人" },
             "adulthood": { pos: "n.", zh: "成年" },
             "aerobics": { pos: "n.", zh: "有氧健身运动" },
@@ -884,7 +879,6 @@ const wordBank = {
             "the best of the best": { pos: "phr.", zh: "精英中的精英" },
             "tower over": { pos: "phr.", zh: "高出；超过" },
             "traumatic": { pos: "a.", zh: "创伤的" },
-            "University of Central Lancashire": { pos: "n.", zh: "中央兰开夏大学" },
             "Valentine's Day": { pos: "n.", zh: "情人节" },
             "variation": { pos: "n.", zh: "变化；变更" },
             "varied": { pos: "a.", zh: "各种各样的" },
@@ -893,7 +887,7 @@ const wordBank = {
             "weight lifting": { pos: "n.", zh: "举重运动" },
             "whereas": { pos: "conj.", zh: "但是；而；却" }
         },
-        "Unit 8": {
+        "Unit 8 · Urban Planning": {
             "accommodating": { pos: "a.", zh: "帮助的；与人方便的" },
             "account for": { pos: "phr.", zh: "是……的原因；占" },
             "agglomeration": { pos: "n.", zh: "聚集；聚结" },

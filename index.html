@@ -4,81 +4,303 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>NEUEnglish</title>
+    <!-- 使用与大 Logo 完全一致的内联 SVG 作为标签页图标 -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0' y1='0' x2='36' y2='36' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%236fa4ff'/%3E%3Cstop offset='1' stop-color='%23a583ff'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='36' y1='0' x2='0' y2='36' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23d79aff'/%3E%3Cstop offset='1' stop-color='%236fa4ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='6' width='10' height='24' rx='3' fill='url(%23g1)'/%3E%3Crect x='22' y='6' width='10' height='24' rx='3' fill='url(%23g2)'/%3E%3Cpath d='M14 6 L22 30' stroke='url(%23g1)' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M22 6 L14 30' stroke='url(%23g2)' stroke-width='5' stroke-linecap='round' opacity='0.6'/%3E%3C/svg%3E">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>NEUEnglish</h1>
-        <h2>不要把时间花在洋人身上</h2>
+        <div class="header-title">
+            <svg class="logo-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="grad-1" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#6fa4ff"/><stop offset="1" stop-color="#a583ff"/>
+                    </linearGradient>
+                    <linearGradient id="grad-2" x1="36" y1="0" x2="0" y2="36" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#d79aff"/><stop offset="1" stop-color="#6fa4ff"/>
+                    </linearGradient>
+                </defs>
+                <rect x="4" y="6" width="10" height="24" rx="3" fill="url(#grad-1)"/>
+                <rect x="22" y="6" width="10" height="24" rx="3" fill="url(#grad-2)"/>
+                <path d="M14 6 L22 30" stroke="url(#grad-1)" stroke-width="5" stroke-linecap="round"/>
+                <path d="M22 6 L14 30" stroke="url(#grad-2)" stroke-width="5" stroke-linecap="round" opacity="0.6"/>
+            </svg>
+            <h1>NEUEnglish</h1>
+        </div>
+        <h2>不要把时间浪费在洋人身上</h2>
     </header>
 
-    <main>
-        <!-- 范围选择 -->
-        <div class="scope-bar">
-            <select id="bookSelect" aria-label="选择教程"></select>
-            <select id="unitSelect" aria-label="选择单元"></select>
-            <button class="icon-btn" id="quickTestBtn" title="快速测试（10 题）">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/>
-                </svg>
+    <main id="mainContent">
+        <!-- 第一页：刷题页 -->
+        <div id="view-practice" class="view active">
+            <div class="current-book-label" id="currentBookLabel">当前题库：新时代大学学术英语·综合教程（上册） · 全部单元</div>
+            <div class="toolbar">
+                <div class="mode-bar" role="group" aria-label="模式">
+                    <button type="button" class="chip" data-mode="en2zh">英 → 中</button>
+                    <button type="button" class="chip" data-mode="zh2en">中 → 英</button>
+                    <button type="button" class="chip" data-mode="mixed">混合</button>
+                </div>
+            </div>
+            <div class="slider-container" id="sliderContainer">
+                <div class="slider-track" id="sliderTrack"></div>
+            </div>
+            <div class="stats" id="stats"></div>
+        </div>
+
+        <!-- 第二页：学情页 -->
+        <div id="view-stats" class="view">
+            <div class="current-book-label" id="statsBookLabel">当前学情：新时代大学学术英语·综合教程（上册）</div>
+            
+            <!-- 单词小测按钮 -->
+            <button class="primary-test-btn" onclick="openQuizSetup()">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+                单词小测 (Test Mode)
             </button>
-        </div>
 
-        <!-- 题型 / 模式 -->
-        <div class="mode-bar" role="group" aria-label="模式">
-            <button type="button" class="chip" data-mode="en2zh">英 → 中</button>
-            <button type="button" class="chip" data-mode="zh2en">中 → 英</button>
-            <button type="button" class="chip" data-mode="mixed">混合</button>
-            <button type="button" class="chip" data-mode="view">📖 词汇表</button>
-        </div>
+            <!-- 本组回顾（上移） -->
+            <div class="summary" id="summaryCard"></div>
 
-        <!-- 答题区 -->
-        <div id="quizArea">
-            <div class="card" id="card">
-                <p id="Meaning"></p>
-                <span class="pos-tag" id="posTag"></span>
+            <!-- 历次小测趋势图 -->
+            <div class="summary" style="padding-bottom: 10px;">
+                <h3 class="summary-title" style="font-size: 1.1rem; margin-bottom: 10px;">历次小测趋势</h3>
+                <div id="trendChartContainer" style="width: 100%;"></div>
             </div>
 
-            <div id="options" class="options-grid" hidden></div>
-
-            <div id="answerArea" class="answer-area" hidden>
-                <input type="text" id="wordInput" placeholder="请输入英文单词"
-                       autocomplete="off" autocapitalize="off" spellcheck="false">
-                <button class="btn-primary" id="submitBtn" onclick="checkWord()">确定</button>
-            </div>
-
-            <p class="retry-hint" id="retryHint" hidden>✗ 拼写有误，再试一次</p>
-            <p class="answer-hint" id="answerHint" hidden></p>
-
-            <div class="action-row">
-                <button class="btn-ghost" id="showAnswerBtn" hidden onclick="showAnswer()">查看答案</button>
-                <button class="btn-secondary next-btn" onclick="nextQuestion()">下一题</button>
+            <div class="global-stats-panel">
+                <h3 class="global-title">各单元累计学情</h3>
+                <div id="globalStatsList" class="global-stats-list"></div>
             </div>
         </div>
 
-        <!-- 词汇表模式 -->
-        <div id="viewArea" class="view-area" hidden>
-            <!-- 列表内容由 JS 生成 -->
-        </div>
-
-        <!-- 本组小结 -->
-        <div class="summary" id="summary" hidden>
-            <h3 class="summary-title">本组完成！</h3>
-            <div class="summary-rate-wrap">
-                <span class="summary-rate" id="sumRate">0%</span>
-                <span class="summary-sub">正确率</span>
+        <!-- 第三页：词书页 -->
+        <div id="view-vocab" class="view">
+            <div class="scope-bar">
+                <select id="bookSelect" aria-label="选择教程"></select>
+                <select id="unitSelect" aria-label="选择单元"></select>
             </div>
-            <p class="summary-count">答对 <strong id="sumCorrect">0</strong> / <span id="sumTotal">0</span></p>
-            <div class="summary-wrong" id="sumWrong"></div>
-            <button class="btn-primary" onclick="restartSession()">再来一组</button>
+            <div id="viewArea" class="view-area"></div>
         </div>
 
-        <div class="stats" id="stats"></div>
+        <!-- 第四页：用户/设置页 -->
+        <div id="view-user" class="view">
+            <div class="user-profile">
+                <div class="avatar">
+                    <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <h2 id="displayUsername">刷题人</h2>
+                <div class="edit-name-area">
+                    <input type="text" id="usernameInput" placeholder="修改昵称" maxlength="15">
+                    <button class="btn-primary" onclick="saveUsername()">保存</button>
+                </div>
+            </div>
+
+            <div class="settings-wrapper">
+                <div class="settings-group">
+                    <div class="settings-item">
+                        <span class="settings-left">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                            白天模式
+                        </span>
+                        <label class="switch">
+                            <input type="checkbox" id="themeToggle" onchange="toggleTheme(this)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <button class="settings-item" onclick="togglePanel('helpPanel', this)">
+                        <span class="settings-left">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                            使用说明
+                        </span>
+                        <span class="settings-right"><svg class="arrow-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                    </button>
+                    <div class="about-panel" id="helpPanel" hidden>
+                        <h3>使用说明</h3>
+                        <div class="about-content">
+                            <p><strong>1. 滑动答题：</strong>刷题时可直接左右滑动屏幕切换上一题/下一题，点击下方按钮同样有效。</p>
+                            <p><strong>2. 模糊匹配：</strong>中翻英输入时，无需输入标点符号。例如“for short”和“for@short”均判定为正确。</p>
+                            <p><strong>3. 词性缩写解释：</strong></p>
+                            <ul class="pos-list">
+                                <li><strong>n.</strong> 名词 (noun)</li>
+                                <li><strong>v.</strong> 动词 (verb)</li>
+                                <li><strong>vt.</strong> 及物动词</li>
+                                <li><strong>vi.</strong> 不及物动词</li>
+                                <li><strong>aux.</strong> 助动词</li>
+                                <li><strong>a. / adj.</strong> 形容词</li>
+                                <li><strong>ad. / adv.</strong> 副词</li>
+                                <li><strong>prep.</strong> 介词</li>
+                                <li><strong>conj.</strong> 连词</li>
+                                <li><strong>pron.</strong> 代词</li>
+                                <li><strong>art.</strong> 冠词</li>
+                                <li><strong>num.</strong> 数词</li>
+                                <li><strong>interj.</strong> 感叹词</li>
+                                <li><strong>pl.</strong> 复数</li>
+                                <li><strong>abbr.</strong> 缩写</li>
+                                <li><strong>phr.</strong> 短语词组</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <button class="settings-item" onclick="togglePanel('sourcePanel', this)">
+                        <span class="settings-left">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                            题库来源
+                        </span>
+                        <span class="settings-right"><svg class="arrow-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                    </button>
+                    <div class="about-panel" id="sourcePanel" hidden>
+                        <h3>题库说明</h3>
+                        <div class="about-content">
+                            <p><strong>来源版本：</strong>《新时代大学学术英语·综合教程（上册）》实体书扫描提取（Unit 1 - Unit 8）。</p>
+                            <p><strong>单词过滤条件：</strong>已由人工筛查并过滤掉纯人名（如 Alice Klein）、纯地名（如 Glasgow）及部分大学名称。保留了国家名、学科术语、化学/医学专有名词。</p>
+                            <p><strong>单元归类：</strong>根据单词在教材中首次出现的单元（U1-U8）进行严格划分，忽略 R1/L1 等小节标记。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <button class="settings-item" onclick="togglePanel('logPanel', this)">
+                        <span class="settings-left">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            更新日志
+                        </span>
+                        <span class="settings-right"><svg class="arrow-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                    </button>
+                    <div class="about-panel" id="logPanel" hidden>
+                        <h3>更新日志</h3>
+                        <div class="about-content log-list">
+                            <p><strong>v3.5</strong> - 全面优化小测历史趋势图；增加题库来源说明；补全词性缩写；精简并优化设置面板排版。</p>
+                            <p><strong>v3.4</strong> - 优化底部弹窗布局与操作逻辑；完善 Cookie 存储与多版本兼容。</p>
+                            <p><strong>v3.0</strong> - 引入浅色（白天）模式；加入多维度学情看板；重构底层 UI 交互。</p>
+                            <p><strong>v2.0</strong> - 引入原生滑块切题手感；增加错题重试与模糊匹配机制。</p>
+                            <p><strong>v1.0</strong> - 初代版本，基础的中英双向选择题与拼写题。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <button class="settings-item" onclick="togglePanel('aboutPanel', this)">
+                        <span class="settings-left">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            关于 NEUEnglish
+                        </span>
+                        <span class="settings-right"><svg class="arrow-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+                    </button>
+                    <div class="about-panel" id="aboutPanel" hidden>
+                        <h3>NEUEnglish <span class="version">v3.5.0</span></h3>
+                        <div class="about-content">
+                            <p><strong>核心理念：</strong>不要把时间浪费在洋人身上，学完背完，就去享受生活，去做比刷题更重要的事。</p>
+                            <p><strong>功能特色：</strong>中英双向测试、模糊匹配、沉浸式倒计时小测、多维度学情追踪。</p>
+                        </div>
+                        <div class="about-footer">
+                            <a href="https://neumathe.cn/" target="_blank" class="about-link">本网站致敬 NEUMathe</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
-    <footer>
-        <p>&copy; 2026</p>
-    </footer>
+    <!-- 底部导航栏 -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" data-target="view-practice">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+            <span class="text">刷题</span>
+        </button>
+        <button class="nav-item" data-target="view-stats">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            <span class="text">学情</span>
+        </button>
+        <button class="nav-item" data-target="view-vocab">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <span class="text">词书</span>
+        </button>
+        <button class="nav-item" data-target="view-user">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span class="text">我的</span>
+        </button>
+    </nav>
+
+    <!-- 小测设置弹窗 -->
+    <div class="modal-overlay" id="quizSetupModal" hidden>
+        <div class="modal-content">
+            <h3>单词小测设置</h3>
+            <div class="setup-group">
+                <label>测试模式</label>
+                <div class="mode-bar">
+                    <label class="chip active"><input type="radio" name="q-mode" value="en2zh" checked hidden onchange="updateChips(this)"> 英 → 中</label>
+                    <label class="chip"><input type="radio" name="q-mode" value="zh2en" hidden onchange="updateChips(this)"> 中 → 英</label>
+                    <label class="chip"><input type="radio" name="q-mode" value="mixed" hidden onchange="updateChips(this)"> 混合</label>
+                </div>
+            </div>
+            <div class="setup-group">
+                <label>题量</label>
+                <div class="mode-bar">
+                    <label class="chip active"><input type="radio" name="q-count" value="10" checked hidden onchange="updateChips(this); updateSuggestedTime();"> 10题</label>
+                    <label class="chip"><input type="radio" name="q-count" value="20" hidden onchange="updateChips(this); updateSuggestedTime();"> 20题</label>
+                    <label class="chip"><input type="radio" name="q-count" value="custom" hidden onchange="updateChips(this); toggleCustomCount();"> 自定义</label>
+                </div>
+                <div style="margin-top: 10px;">
+                    <input type="number" id="customCountInput" min="1" max="100" value="30" disabled onchange="updateSuggestedTime()" style="width: 100%; padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-hairline); background: var(--bg-panel-alt); color: var(--text-primary);">
+                </div>
+            </div>
+            <div class="setup-group">
+                <label>限时 (秒)</label>
+                <div class="time-setting">
+                    <input type="number" id="quizTimeInput" value="150" min="10">
+                    <span class="time-hint">(根据题量自动建议)</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeQuizSetup()">取消</button>
+                <button class="btn-primary" onclick="startQuiz()">开始小测</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 独立小测沉浸界面 -->
+    <div class="quiz-overlay" id="quizOverlay" hidden>
+        <div class="quiz-header">
+            <button class="quiz-exit-btn" onclick="exitQuiz()">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                退出
+            </button>
+            <div class="quiz-timer" id="quizTimer">02:30</div>
+            <div class="quiz-progress" id="quizProgress">1 / 10</div>
+        </div>
+        <div class="slider-container" id="quizSliderContainer" style="flex:1; height: 100%;">
+            <div class="slider-track" id="quizTrack"></div>
+        </div>
+    </div>
+
+    <!-- 小测交卷总结弹窗 -->
+    <div class="quiz-overlay" id="quizResultOverlay" hidden style="z-index: 3000; background: var(--bg-canvas); padding: 20px; overflow-y: auto;">
+        <div class="summary" id="quizSummaryCard" style="width: 100%; max-width: 500px; margin: auto;">
+            <!-- 动态渲染 -->
+        </div>
+    </div>
+
+    <!-- 自定义提示与确认弹窗 -->
+    <div class="modal-overlay" id="customAlertModal" hidden style="z-index: 9999;">
+        <div class="modal-content" style="max-width: 300px; text-align: center;">
+            <p id="customAlertText" style="font-size: 1rem; margin: 10px 0 20px;"></p>
+            <button class="btn-primary" onclick="closeCustomAlert()">确定</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="customConfirmModal" hidden style="z-index: 9999;">
+        <div class="modal-content" style="max-width: 320px; text-align: center;">
+            <p id="customConfirmText" style="font-size: 1rem; margin: 10px 0 20px;"></p>
+            <div style="display:flex; gap: 10px; width: 100%;">
+                <button class="btn-secondary" onclick="closeCustomConfirm(false)" style="flex: 1;">取消</button>
+                <button class="btn-primary" onclick="closeCustomConfirm(true)" style="flex: 1;">确定</button>
+            </div>
+        </div>
+    </div>
 
     <script src="words.js"></script>
     <script src="app.js"></script>
