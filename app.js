@@ -1,11 +1,10 @@
 // ============================================================
 // NEUEnglish — 答题逻辑
-// 依赖：words.js 里的全局 wordBank
 // ============================================================
 
 let currentBook = Object.keys(wordBank)[0];
 let currentUnit = "__all__";
-let currentMode = "mixed";
+let currentMode = "en2zh"; // 'en2zh' | 'zh2en' | 'mixed' | 'view'
 
 let queue = [];
 let history = [];
@@ -13,9 +12,10 @@ let sessionTotal = 0;
 let stats = { correct: 0, total: 0 };
 
 let currentWord = "";
+let currentPos = "";
 let correctAnswer = "";
 let actualMode = "en2zh";
-let currentResolved = true;
+let currentResolved = true; // 是否已结算（防重复计分）
 let isQuickTest = false;
 
 // ----- 工具 -----
@@ -27,12 +27,16 @@ function shuffle(arr) {
     return arr;
 }
 
-function normalize(s) { return s.toLowerCase().replace(/\s+/g, " ").trim(); }
+function normalize(s) {
+    return s.toLowerCase().replace(/\s+/g, " ").trim();
+}
 
-function setMeaningText(text) {
+function setMeaningText(text, pos = "") {
     const el = document.getElementById("Meaning");
+    const posEl = document.getElementById("posTag");
     el.textContent = text;
     el.dataset.long = text.length > 14 ? "true" : "false";
+    posEl.textContent = pos;
 }
 
 function setCardState(state) {
@@ -52,26 +56,8 @@ function playAnim(type) {
 function updateStats() {
     const el = document.getElementById("stats");
     if (sessionTotal === 0) { el.textContent = ""; return; }
-    const done = history.length;
-    el.textContent = `进度 ${done} / ${sessionTotal} · 答对 ${stats.correct}`;
+    el.textContent = `进度 ${history.length} / ${sessionTotal} · 答对 ${stats.correct}`;
 }
-
-function resetStats() {
-    stats = { correct: 0, total: 0 };
-    history = [];
-    updateStats();
-}
-
-function showRetryHint() { document.getElementById("retryHint").hidden = false; }
-function hideRetryHint() { document.getElementById("retryHint").hidden = true; }
-function showAnswerBtn() { document.getElementById("showAnswerBtn").hidden = false; }
-function hideAnswerBtn() { document.getElementById("showAnswerBtn").hidden = true; }
-function showAnswerHint(text) {
-    const el = document.getElementById("answerHint");
-    el.textContent = "答案：" + text;
-    el.hidden = false;
-}
-function hideAnswerHint() { document.getElementById("answerHint").hidden = true; }
 
 // ----- 范围 -----
 function getUnitsOfBook(book) { return wordBank[book] ? Object.keys(wordBank[book]) : []; }
@@ -103,22 +89,52 @@ function getPool() {
     if (!book) return [];
     const units = currentUnit === "__all__" ? Object.keys(book) : [currentUnit];
     const pool = [];
-    units.forEach(u => Object.entries(book[u] || {}).forEach(([en, zh]) => pool.push({ en, zh })));
+    units.forEach(u => Object.entries(book[u] || {}).forEach(([en, data]) => {
+        pool.push({ en, zh: data.zh, pos: data.pos });
+    }));
     return pool;
 }
 
 function getAllMeanings() {
     const set = new Set();
-    Object.values(wordBank).forEach(book => Object.values(book).forEach(unit => Object.values(unit).forEach(zh => set.add(zh))));
+    Object.values(wordBank).forEach(book => Object.values(book).forEach(unit => Object.values(unit).forEach(data => set.add(data.zh))));
     return Array.from(set);
 }
 
-// ----- 队列 -----
+// ----- 词汇表模式 -----
+function renderVocab() {
+    const pool = getPool();
+    const viewArea = document.getElementById("viewArea");
+    viewArea.innerHTML = "";
+    
+    if (pool.length === 0) {
+        viewArea.innerHTML = "<p style='text-align:center; padding:20px;'>当前范围没有单词</p>";
+        return;
+    }
+
+    // 按字母排序
+    pool.sort((a, b) => a.en.localeCompare(b.en));
+
+    const list = document.createElement("div");
+    list.className = "vocab-list";
+    pool.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "vocab-item";
+        div.innerHTML = `
+            <span class="vocab-word">${item.en}</span>
+            <span class="vocab-pos">${item.pos}</span>
+            <span class="vocab-zh">${item.zh}</span>
+        `;
+        list.appendChild(div);
+    });
+    viewArea.appendChild(list);
+}
+
+// ----- 出题 -----
 function buildQueue() {
     const pool = getPool();
     queue = shuffle([...pool]).map(item => ({
-        en: item.en,
-        zh: item.zh,
+        en: item.en, zh: item.zh, pos: item.pos,
         mode: currentMode === "mixed" ? (Math.random() < 0.5 ? "en2zh" : "zh2en") : currentMode
     }));
     sessionTotal = queue.length;
@@ -132,11 +148,10 @@ function resolveCurrent(correct) {
     currentResolved = true;
     stats.total += 1;
     if (correct) stats.correct += 1;
-    history.push({ en: currentWord, zh: correctAnswer, mode: actualMode, correct });
+    history.push({ en: currentWord, zh: correctAnswer, pos: currentPos, correct });
     updateStats();
 }
 
-// ----- 出题 -----
 function nextQuestion() {
     if (!currentResolved) resolveCurrent(false);
 
@@ -148,11 +163,14 @@ function nextQuestion() {
     const item = queue.shift();
     currentWord = item.en;
     correctAnswer = item.zh;
+    currentPos = item.pos;
     actualMode = item.mode;
     currentResolved = false;
 
     setCardState(null);
-    hideRetryHint(); hideAnswerBtn(); hideAnswerHint();
+    document.getElementById("retryHint").hidden = true;
+    document.getElementById("showAnswerBtn").hidden = true;
+    document.getElementById("answerHint").hidden = true;
 
     const optionsEl = document.getElementById("options");
     const answerArea = document.getElementById("answerArea");
@@ -160,7 +178,7 @@ function nextQuestion() {
     const submitBtn = document.getElementById("submitBtn");
 
     if (actualMode === "en2zh") {
-        setMeaningText(currentWord);
+        setMeaningText(currentWord, currentPos);
         const choices = buildChoices(correctAnswer);
         optionsEl.innerHTML = "";
         choices.forEach(opt => {
@@ -172,7 +190,7 @@ function nextQuestion() {
         optionsEl.hidden = false;
         answerArea.hidden = true;
     } else {
-        setMeaningText(correctAnswer);
+        setMeaningText(correctAnswer, currentPos);
         optionsEl.innerHTML = ""; optionsEl.hidden = true;
         answerArea.hidden = false;
         wordInput.value = ""; wordInput.disabled = false; submitBtn.disabled = false;
@@ -211,25 +229,32 @@ function checkWord() {
     if (!val) { input.focus(); return; }
 
     const isCorrect = normalize(val) === normalize(currentWord);
-    hideAnswerHint();
+    document.getElementById("answerHint").hidden = true;
 
     if (isCorrect) {
         resolveCurrent(true);
         input.disabled = true; submitBtn.disabled = true;
-        hideRetryHint(); hideAnswerBtn();
+        document.getElementById("retryHint").hidden = true;
+        document.getElementById("showAnswerBtn").hidden = true;
         setCardState("is-correct"); playAnim("correct");
-        setMeaningText("✓ " + currentWord);
+        setMeaningText("✓ " + currentWord, currentPos);
     } else {
         setCardState("is-error"); playAnim("error");
         input.value = ""; input.focus();
-        showRetryHint(); showAnswerBtn();
+        document.getElementById("retryHint").hidden = false;
+        document.getElementById("showAnswerBtn").hidden = false;
+        // 注意：这里不调用 resolveCurrent，允许继续重试
     }
 }
 
+// ----- 查看答案 -----
 function showAnswer() {
     if (currentResolved) return;
-    showAnswerHint(currentWord);
-    hideRetryHint(); hideAnswerBtn();
+    const hint = document.getElementById("answerHint");
+    hint.textContent = "答案：" + currentWord;
+    hint.hidden = false;
+    document.getElementById("retryHint").hidden = true;
+    document.getElementById("showAnswerBtn").hidden = true; // 收起按钮，但用户仍可输入
 }
 
 // ----- 小结 -----
@@ -251,9 +276,8 @@ function showSummary() {
     } else {
         wrong.forEach(h => {
             const div = document.createElement("div"); div.className = "wrong-item";
-            const en = document.createElement("span"); en.className = "wrong-en"; en.textContent = h.en;
-            const zh = document.createElement("span"); zh.className = "wrong-zh"; zh.textContent = h.zh;
-            div.appendChild(en); div.appendChild(zh); wrongEl.appendChild(div);
+            div.innerHTML = `<span class="wrong-en">${h.en}</span> <span class="wrong-zh">${h.pos} ${h.zh}</span>`;
+            wrongEl.appendChild(div);
         });
     }
 }
@@ -261,6 +285,14 @@ function showSummary() {
 // ----- 新一轮 -----
 function startSession() {
     isQuickTest = false;
+    if (currentMode === "view") {
+        document.getElementById("quizArea").hidden = true;
+        document.getElementById("summary").hidden = true;
+        document.getElementById("viewArea").hidden = false;
+        renderVocab();
+        return;
+    }
+    document.getElementById("viewArea").hidden = true;
     buildQueue();
     currentResolved = true;
     document.getElementById("summary").hidden = true;
@@ -277,12 +309,13 @@ function startQuickTest() {
     isQuickTest = true;
     const testPool = shuffle([...pool]).slice(0, Math.min(10, pool.length));
     queue = testPool.map(item => ({
-        en: item.en, zh: item.zh,
-        mode: currentMode === "mixed" ? (Math.random() < 0.5 ? "en2zh" : "zh2en") : currentMode
+        en: item.en, zh: item.zh, pos: item.pos,
+        mode: currentMode === "mixed" ? (Math.random() < 0.5 ? "en2zh" : "zh2en") : (currentMode === "view" ? "en2zh" : currentMode)
     }));
     sessionTotal = queue.length;
     stats = { correct: 0, total: 0 }; history = [];
     currentResolved = true;
+    document.getElementById("viewArea").hidden = true;
     document.getElementById("summary").hidden = true;
     document.getElementById("quizArea").hidden = false;
     nextQuestion();
@@ -317,12 +350,15 @@ function init() {
     input.addEventListener("keydown", e => { if (e.key === "Enter") checkWord(); });
     input.addEventListener("input", () => {
         if (currentResolved) return;
-        hideAnswerHint();
+        document.getElementById("answerHint").hidden = true; // 重新输入时隐藏答案
         if (document.getElementById("card").classList.contains("is-error")) {
-            setCardState(null); hideRetryHint();
+            setCardState(null); 
+            document.getElementById("retryHint").hidden = true;
         }
     });
 
+    // 默认选中第一个模式
+    document.querySelector('.mode-bar .chip[data-mode="en2zh"]').classList.add("active");
     startSession();
 }
 
